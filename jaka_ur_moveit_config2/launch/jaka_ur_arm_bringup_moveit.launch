@@ -1,0 +1,14 @@
+<launch>
+ <!-- Launch Gazebo -->
+<include file="$(find jaka_ur_description_pkg)/launch/gazebo.launch" />
+<!-- ros_control seven dof arm launch file -->
+<include file="$(find jaka_ur_description_pkg)/launch/jaka_ur_moveit_gazebo_joint_states.launch" />
+<!-- ros_control position control dof arm launch file -->
+<!--<include file="$(find jaka_ur_description_pkg)/launch/jaka_ur__
+gazebo_position.launch" /> -->
+<!-- ros_control trajectory control dof arm launch file -->
+<include file="$(find jaka_ur_description_pkg)/launch/jaka_ur_trajectory_controller.launch" />
+<!-- moveit launch file -->
+<include file="$(find jaka_ur_moveit_config2)/launch/moveit_planning_execution.launch" />
+</launch>
+
