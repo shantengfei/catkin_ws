@@ -6,7 +6,7 @@
   ros::init(argc, argv, "state_pub");
   ros::NodeHandle n;
   ros::Publisher joint_state_pub =
-      n.advertise<sensor_msgs::JointState>("/move_group/fake_controller_joint_states",1000);
+      n.advertise<sensor_msgs::JointState>("jakaUr/joint_states",1000);
       ros::Rate loop_rate(20);
      int count=0; 
      double step=0.01;
