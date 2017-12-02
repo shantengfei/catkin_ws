@@ -94,6 +94,7 @@ double step=0.01;
       goal.trajectory.joint_names[5] = "joint_6";
       goal.trajectory.points[0].positions[0] = -0.238952;
       goal.trajectory.points[0].positions[1] =  0.49258470;
+     // goal.trajectory.points[0].positions[2] = -0.9567198;
       goal.trajectory.points[0].positions[2] = -0.9567198;
       goal.trajectory.points[0].positions[3] =  0.464155;
       goal.trajectory.points[0].positions[4] = -0.2389186;

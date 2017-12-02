@@ -1,0 +1,9 @@
+<library path="lib/libjoint_value_monitor">
+  <class name="joint_value_monitor/joint_value"
+         type="joint_value_monitor::joint_value"
+         base_class_type="rviz::Panel">
+    <description>
+      A panel widget allowing simple diff-drive style robot base control.
+    </description>
+  </class>
+</library>
