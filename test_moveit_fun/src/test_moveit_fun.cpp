@@ -6,6 +6,7 @@
 #include <control_msgs/FollowJointTrajectoryGoal.h>
 #include <control_msgs/FollowJointTrajectoryFeedback.h>
 #include <control_msgs/FollowJointTrajectoryResult.h>
+#include <sensor_msgs/JointState.h>
 #include <Eigen/Geometry>
 // MoveIt!
 #include <moveit/robot_model_loader/robot_model_loader.h>
@@ -16,6 +17,8 @@
 
 typedef actionlib::SimpleActionClient<control_msgs::FollowJointTrajectoryAction>
     Client;
+    //获取当前关节角度值
+double CurrentJointState[6] {};
 
 // 当action完成后会调用次回调函数一次
 void doneCB(const actionlib::SimpleClientGoalState &state,
@@ -29,22 +32,56 @@ void activeCB() { ROS_INFO("Goal just went active"); }
 
 // 收到feedback后调用的回调函数
 void feedbackCB(
-    const control_msgs::FollowJointTrajectoryFeedbackConstPtr &feedback) {
+const control_msgs::FollowJointTrajectoryFeedbackConstPtr &feedback) {
   ROS_INFO("percent_complete:");
+}
+//订阅joint states话题获得当前机器人的关节角度
+void listenerCB(const sensor_msgs::JointState &msg)
+{
+  for(int i=0;i<msg.position.size();i++)
+{
+  CurrentJointState[i] = msg.position[i];
+  ROS_INFO("current joint_state of joint[%d] is %f\n",i+1,CurrentJointState[i]);
+}
 }
 
 int main(int argc, char **argv) {
+  // init初始化必须在开始，否则会出现Couldn’t find an AF_INET address的错误
   ros::init(argc, argv, "right_arm_kinematics");
-  ros::AsyncSpinner spinner(1);
-  spinner.start();
+  //设置参数，从参数服务器上获得相关的sim参数，假如sim为true那就是带着gazebo，需要发布的话题是jakaUr/jaka_joint_controller/follow_joint_trajectory
+  //否则sim为false时，发布的话题是joint_trajectory_action，这是因为action是堵塞机制，不能同时将两个不是同时运行的action放在一起
+  std::string actionName = "";
+  std::string topicName = "";
+  bool sim = true;
+  ros::param::get("sim", sim);
+  ROS_INFO("the sim is %d", sim);
+  if (sim == true) {
+    actionName = "jakaUr/jaka_joint_controller/follow_joint_trajectory";
+    topicName = "jakaUr/joint_states";
+  } 
+  else {
+    actionName = "joint_trajectory_action";
+    topicName = "joint_states";
+  }
 
   double step = 0.01;
   //定义一个客户端,第一个参数是action名称，第二个参数true不用ros::spin()
-  Client client("jakaUr/jaka_joint_controller/follow_joint_trajectory", true);
+ 
+ 
+  ros::NodeHandle nh;
+
+  ros::AsyncSpinner spinner(1);
+  spinner.start();
+
+  Client client(actionName, true);
+
+  ros::Subscriber sub = nh.subscribe(topicName, 1000, listenerCB);
+
   //等待服务器端
   ROS_INFO("Waiting for action server to start.");
   client.waitForServer();
-  ROS_INFO("Action server started, sending goal.");
+ // client_without_ga.waitForServer();
+   ROS_INFO("Action server started, sending goal.");
 
   //创建action的goal
   control_msgs::FollowJointTrajectoryGoal goal;
@@ -63,42 +100,50 @@ int main(int argc, char **argv) {
     goal.trajectory.joint_names[3] = "joint_4";
     goal.trajectory.joint_names[4] = "joint_5";
     goal.trajectory.joint_names[5] = "joint_6";
-    goal.trajectory.points[0].positions[0] = -0.238952;
-    goal.trajectory.points[0].positions[1] = 0.49258470;
+    //给定当前关节角度值
+    for(int k=0;k<goal.trajectory.points.size();k++)
+    {
+      for (int j = 0; j < goal.trajectory.points[0].positions.size(); j++) {
+        goal.trajectory.points[k].positions[j] = CurrentJointState[j]+k*0.2;
+      }
+      goal.trajectory.points[k].time_from_start = ros::Duration(0, (k+1)*100000000);
+    }
+   
+    // goal.trajectory.points[0].positions[0] = -0.238952;
+    // goal.trajectory.points[0].positions[1] = 0.49258470;
     // goal.trajectory.points[0].positions[2] = -0.9567198;
-    goal.trajectory.points[0].positions[2] = -0.9567198;
-    goal.trajectory.points[0].positions[3] = 0.464155;
-    goal.trajectory.points[0].positions[4] = -0.2389186;
-    goal.trajectory.points[0].positions[5] = 3.806e-05;
-    goal.trajectory.points[0].time_from_start = ros::Duration(0, 100000000);
+    // goal.trajectory.points[0].positions[3] = 0.464155;
+    // goal.trajectory.points[0].positions[4] = -0.2389186;
+    // goal.trajectory.points[0].positions[5] = 3.806e-05;
+    // goal.trajectory.points[0].time_from_start = ros::Duration(0, 100000000);
 
-    goal.trajectory.points[1].positions[0] = -0.238952;
-    goal.trajectory.points[1].positions[1] = 0.8;
-    goal.trajectory.points[1].positions[2] = -0.9567198;
-    goal.trajectory.points[1].positions[3] = 0.464155;
-    goal.trajectory.points[1].positions[4] = -0.2389186;
-    goal.trajectory.points[1].positions[5] = 3.806e-05;
+  //   goal.trajectory.points[1].positions[0] = -0.238952;
+  //   goal.trajectory.points[1].positions[1] = 0.8;
+  //   goal.trajectory.points[1].positions[2] = -0.9567198;
+  //   goal.trajectory.points[1].positions[3] = 0.464155;
+  //   goal.trajectory.points[1].positions[4] = -0.2389186;
+  //   goal.trajectory.points[1].positions[5] = 3.806e-05;
 
-    goal.trajectory.points[1].time_from_start = ros::Duration(0, 500000000);
+  //   goal.trajectory.points[1].time_from_start = ros::Duration(0, 500000000);
 
-    goal.trajectory.points[2].positions[0] = -0.238952;
-    goal.trajectory.points[2].positions[1] = 1.1;
-    goal.trajectory.points[2].positions[2] = -0.9567198;
-    goal.trajectory.points[2].positions[3] = 0.464155;
-    goal.trajectory.points[2].positions[4] = -0.2389186;
-    goal.trajectory.points[2].positions[5] = 3.806e-05;
+  //   goal.trajectory.points[2].positions[0] = -0.238952;
+  //   goal.trajectory.points[2].positions[1] = 1.1;
+  //   goal.trajectory.points[2].positions[2] = -0.9567198;
+  //   goal.trajectory.points[2].positions[3] = 0.464155;
+  //   goal.trajectory.points[2].positions[4] = -0.2389186;
+  //   goal.trajectory.points[2].positions[5] = 3.806e-05;
 
-    goal.trajectory.points[2].time_from_start = ros::Duration(0, 800000000);
+  //  goal.trajectory.points[2].time_from_start = ros::Duration(0, 800000000);
 
     client.sendGoal(goal, &doneCB, &activeCB, &feedbackCB);
- 
+   // client_without_ga.sendGoal(goal, &doneCB, &activeCB, &feedbackCB);
  //   ros::spinOnce();
 
   }
 
-  moveit::planning_interface::MoveGroup group("jakaUr");
-  group.setNamedTarget("home");
-  group.move();
+  // moveit::planning_interface::MoveGroup group("jakaUr");
+  // group.setNamedTarget("home");
+  // group.move();
 
 //   std::vector<double> group_variable_values;
 //   group.getCurrentState()->copyJointGroupPositions(group.getCurrentState()->getRobotModel()->getJointModelGroup(group.getName()),group_variable_values);
