@@ -19,11 +19,6 @@ Q_OBJECT
 public:
   // 构造函数，在类中会用到QWidget的实例来实现GUI界面，这里先初始化为0即可
   TeleopPanel( QWidget* parent = 0 );
-  static double testNum;
-      // 重载rviz::Panel积累中的函数，用于保存、加载配置文件中的数据，在我们这个plugin
-      // 中，数据就是topic的名称
-      // virtual void load( const rviz::Config& config );
-      // virtual void save( rviz::Config config ) const;
 
       // 公共槽.
       public Q_SLOTS :
@@ -34,17 +29,11 @@ public:
 
   // 内部槽.
 protected Q_SLOTS:
-  // void sendVel();                 // 发布当前的速度值
-  // void update_Linear_Velocity();  // 根据用户的输入更新线速度值
-  // void update_Angular_Velocity(); // 根据用户的输入更新角速度值
-  // void updateTopic();             // 根据用户的输入更新topic name
   void update_joint_value();               //更新各个关节的信息
       // 内部变量.
 protected:
-      // topic name输入框
-      //  QLineEdit* output_topic_editor_;
-      //   QString output_topic_;
-      QLabel *QLjoint1;
+
+  QLabel *QLjoint1;
   QLabel *QLjoint2;
   QLabel *QLjoint3;
   QLabel *QLjoint4;
@@ -53,26 +42,16 @@ protected:
   double joint[6]={0};
 
   void chatterCB(const sensor_msgs::JointState &msg);
-  // 线速度值输入框
-  // QLineEdit* output_topic_editor_1;
-  // QString output_topic_1;
 
-  // 角速度值输入框
-//  QLineEdit* output_topic_editor_2;
-//   QString output_topic_2;
- 
-
-  // ROS的publisher，用来发布速度topic
-  ros::Publisher velocity_publisher_;
   ros::Subscriber jointSub;
   // The ROS node handle.
+  //这里的是判断话题是那个话题的部分
   ros::NodeHandle nh_;
-
-  // 当前保存的线速度和角速度值
-  // float linear_velocity_;
-  // float angular_velocity_;
+  std::string topicName ;
+  bool sim ;
 };
 
 } // end namespace rviz_teleop_commander
 
 #endif // TELEOP_PANEL_H
+

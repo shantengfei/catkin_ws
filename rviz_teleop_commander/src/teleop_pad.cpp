@@ -20,21 +20,15 @@ TeleopPanel::TeleopPanel( QWidget* parent ) : rviz::Panel( parent )
       // 创建一个输入topic命名的窗口
       QVBoxLayout *topic_layout = new QVBoxLayout;
   topic_layout->addWidget( new QLabel( "joint1" ));
-  // output_topic_editor_ = new QLineEdit;
-  // topic_layout->addWidget(output_topic_editor_);
+
    QLjoint1 = new QLabel;
    topic_layout->addWidget(QLjoint1);
-  // 创建一个输入线速度的窗口
+
   topic_layout->addWidget( new QLabel( "joint2" ));
-//  output_topic_editor_1 = new QLineEdit;
-//  topic_layout->addWidget( output_topic_editor_1 );
   QLjoint2 = new QLabel;
   topic_layout->addWidget(QLjoint2);
 
-  // 创建一个输入角速度的窗口
   topic_layout->addWidget( new QLabel( "joint3" ));
-//  output_topic_editor_2 = new QLineEdit;
-//  topic_layout->addWidget( output_topic_editor_2 );
   QLjoint3 = new QLabel;
   topic_layout->addWidget(QLjoint3);
 
@@ -59,9 +53,19 @@ TeleopPanel::TeleopPanel( QWidget* parent ) : rviz::Panel( parent )
   // 设置定时器的回调函数，按周期调用sendVel()
 
   connect(output_timer, SIGNAL(timeout()), this, SLOT(update_joint_value()));
-  // 设置定时器的周期，100ms,不可设置的过小，一旦设置过小就会出现响应的问题，所以这里不能设置定时器的时间过短，否则容易出问题
-  output_timer->start( 100 );
+  // 设置定时器的周期，1s,不可设置的过小，一旦设置过小就会出现响应的问题，所以这里不能设置定时器的时间过短，否则容易出问题
+  output_timer->start( 1000 );
 
+   ros::param::get("sim", sim);
+   ROS_INFO("the sim is %d", sim);
+   if (sim == true) 
+   {
+     topicName = "jakaUr/joint_states";
+   } 
+   else 
+   {
+     topicName = "joint_states";
+   }
 } //构造函数的结尾
 
 void TeleopPanel::chatterCB(const sensor_msgs::JointState &msg)
@@ -80,7 +84,7 @@ void TeleopPanel::chatterCB(const sensor_msgs::JointState &msg)
 {
 
   if (ros::ok())
- jointSub =nh_.subscribe("joint_states", 1000, &TeleopPanel::chatterCB, this);
+    jointSub = nh_.subscribe(topicName, 1000, &TeleopPanel::chatterCB, this);
 }
 
 
