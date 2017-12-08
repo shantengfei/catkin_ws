@@ -159,7 +159,8 @@ PointMovePanel::PointMovePanel(QWidget *parent)
 
 
   //初始化goal
-  goal.trajectory.header.stamp = ros::Time::now();
+  //这里的时间戳加上以后在用gazebo的时候会出现问题，就是时间过期的问题
+  //goal.trajectory.header.stamp = ros::Time::now();
   goal.trajectory.joint_names.resize(6);
   goal.trajectory.points.resize(3);
   goal.trajectory.points[0].positions.resize(6);
