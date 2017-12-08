@@ -13,8 +13,10 @@
 namespace point_move_test
 {
 // 构造函数，初始化变量
-PointMovePanel::PointMovePanel(QWidget *parent): rviz::Panel(parent), currentJointValue {0},step(0.005)
-{
+PointMovePanel::PointMovePanel(QWidget *parent)
+    : rviz::Panel(parent), currentJointValue{0}, step(0.01),
+      clientNoSim("joint_trajectory_action", true),
+      clientSim("jakaUr/jaka_joint_controller/follow_joint_trajectory", true) {
 
   // 创建一个输入topic命名的窗口
   QVBoxLayout* topic_layout = new QVBoxLayout;
@@ -154,7 +156,7 @@ PointMovePanel::PointMovePanel(QWidget *parent): rviz::Panel(parent), currentJoi
     actionName = "joint_trajectory_action";
     topicName = "joint_states";
   }
-  Client client(actionName,true);
+
 
   //初始化goal
   goal.trajectory.header.stamp = ros::Time::now();
@@ -171,6 +173,7 @@ PointMovePanel::PointMovePanel(QWidget *parent): rviz::Panel(parent), currentJoi
     goal.trajectory.joint_names[3] = "joint_4";
     goal.trajectory.joint_names[4] = "joint_5";
     goal.trajectory.joint_names[5] = "joint_6";
+
 }//end of constructor
 
 //订阅的回调函数
@@ -192,7 +195,7 @@ void PointMovePanel::update_joint_value()
 //增加的槽函数
 void PointMovePanel::addJstate(int joint)
 {
-     int k=joint;   //轴号
+     int k=joint-1;   //轴号
    for(int j=0;j<3;j++)
    {
 goal.trajectory.points[j].time_from_start = ros::Duration(0, 5000000 * (j + 1));
@@ -222,13 +225,20 @@ void PointMovePanel::addButtonClick()
     number=jointNumber.toInt(&ok,10);
     ROS_INFO("%d",number);
      addJstate(number);
-}
+     if (ros::ok()) 
+     {
+       if (sim == true)
+         clientSim.sendGoal(goal);
+       else
+         clientNoSim.sendGoal(goal);
+      }
+   }
 }
 
 //减的槽函数
 void PointMovePanel::reduceJstate(int joint)
 {
-  int k = joint; //轴号
+  int k = joint-1; //轴号
   for (int j = 0; j < 3; j++) 
   {
 goal.trajectory.points[j].time_from_start =ros::Duration(0, 5000000 * (j + 1));
@@ -257,13 +267,21 @@ void PointMovePanel::reduceButtonClick()
     number = jointNumber.toInt(&ok, 10);
     ROS_INFO("%d", number);
     reduceJstate(number);
+    if (ros::ok())
+    {
+      if(sim==true)
+      clientSim.sendGoal(goal);
+      else
+      clientNoSim.sendGoal(goal);
+    }
+      
 }
 }
 
  void PointMovePanel::sendJointValue() 
 {
-  //if (ros::ok()) 
- //   client.sendGoal(goal);
+  if (ros::ok()) 
+    clientSim.sendGoal(goal);
 }
 
 } // end namespace rviz_teleop_commander

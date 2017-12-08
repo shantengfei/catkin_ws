@@ -74,7 +74,8 @@ protected:
   ros::NodeHandle nh_;
   ros::Subscriber jointSub;
   typedef actionlib::SimpleActionClient<control_msgs::FollowJointTrajectoryAction> Client;
-
+  Client clientSim;
+  Client clientNoSim;
   void chatterCB(const sensor_msgs::JointState &msg);
   void addJstate(int joint);
   void reduceJstate(int joint);
