@@ -1,0 +1,41 @@
+<launch>
+
+
+ <include file="$(find jaka_ur_moveit_config6)/launch/planning_context.launch" >
+    <arg name="load_robot_description" value="true" />
+  </include>
+
+<arg name="sim" default="true" />
+  <arg name="robot_ip" unless="$(arg sim)" />
+
+  <group if="$(arg sim)">
+    <include file="$(find industrial_robot_simulator)/launch/robot_interface_simulator.launch" />
+  </group>
+ <group unless="$(arg sim)">
+    <include file="$(find [robot_interface_pkg])/launch/robot_interface.launch" >
+      <arg name="robot_ip" value="$(arg robot_ip)"/>
+    </include>
+  </group>
+
+
+
+ <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+<param name="/use_gui" value ="false"/>
+<remap from="/joint_states" to="/jakaUr/joint_states" />
+<!--joint_state_pub节点这里没有什么作用，这里该节点订阅的是jakaUr/joint_states,同时发布的也是该话题所以没有实际的作用。-->
+<!--node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher"-->
+<param name="/use_gui" value="false"/>
+<rosparam param="/source_list">[/jakaUr/joint_states]</rosparam>
+<!--/node-->
+
+<include file="$(find jaka_ur_moveit_config6)/launch/move_group.launch">
+    <arg name="publish_monitored_planning_scene" value="true" />
+  </include>
+
+  <include file="$(find jaka_ur_moveit_config6)/launch/moveit_rviz.launch">
+    <arg name="config" value="true"/>
+  </include>
+
+
+
+</launch>
