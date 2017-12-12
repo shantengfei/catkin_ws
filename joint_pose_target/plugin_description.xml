@@ -1,0 +1,9 @@
+<library path="lib/libjoint_pose_target">
+  <class name="joint_pose_target/joint_pose"
+         type="joint_pose_target::joint_pose"
+         base_class_type="rviz::Panel">
+    <description>
+      A panel widget allowing simple diff-drive style robot base control.
+    </description>
+  </class>
+</library>
