@@ -33,6 +33,7 @@ protected Q_SLOTS:
   void planFun();                 // 显示plan的路径规划
   void moveFun();
   void planAndMoveFun();
+  void planRandomFun();
   void update_Px();  // 根据用户的输入更新线速度值
   void update_Py(); // 根据用户的输入更新角速度值
   void update_Pz();
@@ -67,6 +68,7 @@ protected:
  QPushButton* Plan;
  QPushButton* Move;
  QPushButton* PlanAndMove;
+ QPushButton* PlanRandom;
 
  geometry_msgs::Pose target_pose;
  geometry_msgs::PoseStamped pose;
