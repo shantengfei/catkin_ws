@@ -1,0 +1,9 @@
+<library path="lib/libcartesian_path">
+  <class name="cartesian_path/set_cartesian_path"
+         type="cartesian_path::set_cartesian_path"
+         base_class_type="rviz::Panel">
+    <description>
+      A panel widget allowing simple diff-drive style robot base control.
+    </description>
+  </class>
+</library>
