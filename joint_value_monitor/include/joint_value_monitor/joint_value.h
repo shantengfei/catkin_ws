@@ -33,12 +33,12 @@ public:
 protected:
   void chatterCB(const sensor_msgs::JointState& msg);
       //内部变量，各个关节的实际数据，使用QLabel来显示
-QLabel *QLjoint1;
+QLabel* QLjoint1;
 QLabel* QLjoint2;
-QLabel *QLjoint3;
-QLabel *QLjoint4;
-QLabel *QLjoint5;
-QLabel *QLjoint6;
+QLabel* QLjoint3;
+QLabel* QLjoint4;
+QLabel* QLjoint5;
+QLabel* QLjoint6;
 QString joint1Value;
 QString joint2Value;
 QString joint3Value;

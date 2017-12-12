@@ -100,7 +100,7 @@ int main(int argc, char **argv) {
     goal.trajectory.joint_names[3] = "joint_4";
     goal.trajectory.joint_names[4] = "joint_5";
     goal.trajectory.joint_names[5] = "joint_6";
-    //给定当前关节角度值
+    //给定当前关节角度值,以及后续运动点的关节值
     for(int k=0;k<goal.trajectory.points.size();k++)
     {
       for (int j = 0; j < goal.trajectory.points[0].positions.size(); j++) {
@@ -108,37 +108,9 @@ int main(int argc, char **argv) {
       }
       goal.trajectory.points[k].time_from_start = ros::Duration(0, (k+1)*100000000);
     }
-   
-    // goal.trajectory.points[0].positions[0] = -0.238952;
-    // goal.trajectory.points[0].positions[1] = 0.49258470;
-    // goal.trajectory.points[0].positions[2] = -0.9567198;
-    // goal.trajectory.points[0].positions[3] = 0.464155;
-    // goal.trajectory.points[0].positions[4] = -0.2389186;
-    // goal.trajectory.points[0].positions[5] = 3.806e-05;
-    // goal.trajectory.points[0].time_from_start = ros::Duration(0, 100000000);
 
-  //   goal.trajectory.points[1].positions[0] = -0.238952;
-  //   goal.trajectory.points[1].positions[1] = 0.8;
-  //   goal.trajectory.points[1].positions[2] = -0.9567198;
-  //   goal.trajectory.points[1].positions[3] = 0.464155;
-  //   goal.trajectory.points[1].positions[4] = -0.2389186;
-  //   goal.trajectory.points[1].positions[5] = 3.806e-05;
-
-  //   goal.trajectory.points[1].time_from_start = ros::Duration(0, 500000000);
-
-  //   goal.trajectory.points[2].positions[0] = -0.238952;
-  //   goal.trajectory.points[2].positions[1] = 1.1;
-  //   goal.trajectory.points[2].positions[2] = -0.9567198;
-  //   goal.trajectory.points[2].positions[3] = 0.464155;
-  //   goal.trajectory.points[2].positions[4] = -0.2389186;
-  //   goal.trajectory.points[2].positions[5] = 3.806e-05;
-
-  //  goal.trajectory.points[2].time_from_start = ros::Duration(0, 800000000);
-
-    client.sendGoal(goal, &doneCB, &activeCB, &feedbackCB);
-   // client_without_ga.sendGoal(goal, &doneCB, &activeCB, &feedbackCB);
- //   ros::spinOnce();
-
+    //client.sendGoal(goal, &doneCB, &activeCB, &feedbackCB);
+    client.sendGoal(goal);
   }
 
   // moveit::planning_interface::MoveGroup group("jakaUr");

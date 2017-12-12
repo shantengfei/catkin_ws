@@ -1,5 +1,8 @@
 <launch>
-
+<arg name="sim" default="true"/>
+<param name="sim" type="bool" value="$(arg sim)"/>
+<group if="$(arg sim)">
+<arg name="moveit_controller_manager" value="jakaUr" />
 <include file="$(find jaka_ur_description_pkg)/launch/gazebo.launch" />
 
 <!-- ros_control seven dof arm launch file -->
@@ -13,5 +16,12 @@ gazebo_position.launch" /> -->
 <include file="$(find jaka_ur_description_pkg)/launch/jaka_ur_trajectory_controller.launch" />
 <!-- moveit launch file -->
 <include file="$(find jaka_ur_moveit_config3)/launch/moveit_planning_execution.launch" />
+<remap from="jakaUr/jaka_joint_controller/follow_joint_trajectroy/goal" to="joint_trajectory_action/goal"/>
+<remap from="jakaUr/jaka_joint_controller/follow_joint_trajectroy/cancel" to="joint_trajectory_action/cancel"/>
+</group>
+
+<group unless="$(arg sim)">
+<include file="$(find jaka_ur_moveit_config4)/launch/moveit_planning_execution.launch" />
+</group>
 </launch>
 
