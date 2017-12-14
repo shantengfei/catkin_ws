@@ -16,13 +16,14 @@ namespace cartesian_path
 
 // 构造函数，初始化变量
 set_cartesian_path::set_cartesian_path( QWidget* parent )
-  : rviz::Panel( parent ),spinner(1),group("jakaUr")
+  : rviz::Panel( parent ),spinner(1),group("jakaUr"),wayPointNum(0)
 {
+  //多线程的自缠绕
    spinner.start();
   ROS_INFO("Reference frame: %s", group.getPlanningFrame().c_str());
   ROS_INFO("Reference frame: %s", group.getEndEffectorLink().c_str());
  
-  
+  //界面部分，左侧的垂直列 输入必须经过的点的位置
   QVBoxLayout* topic_layout = new QVBoxLayout;
   topic_layout->addWidget( new QLabel( "Pose Goal position X" ));
   positionX = new QLineEdit;
@@ -78,7 +79,7 @@ set_cartesian_path::set_cartesian_path( QWidget* parent )
 
 
 
-//当前的点位姿
+//右侧垂直列，显示当前的点位姿
   QVBoxLayout* current_point_layout = new QVBoxLayout;
   current_point_layout->addWidget(new QLabel("Current point"));
    current_point_layout->addWidget( new QLabel( "position X" ));
@@ -128,7 +129,7 @@ set_cartesian_path::set_cartesian_path( QWidget* parent )
   // 创建一个定时器，用来定时发布消息
  // QTimer* output_timer = new QTimer( this );
 
-  // 设置信号与槽的连接
+  // 当前输入点的位姿更新
   connect( positionX, SIGNAL( editingFinished() ), this, SLOT( update_Px() ));            
   connect( positionY, SIGNAL( editingFinished() ), this, SLOT( update_Py() )); 
   connect( positionZ, SIGNAL( editingFinished() ), this, SLOT( update_Pz() ));
@@ -136,11 +137,12 @@ set_cartesian_path::set_cartesian_path( QWidget* parent )
   connect( orientationY, SIGNAL( editingFinished() ), this, SLOT( update_Oy() )); 
   connect( orientationZ, SIGNAL( editingFinished() ), this, SLOT( update_Oz() ));
   connect( orientationW, SIGNAL( editingFinished() ), this, SLOT( update_Ow() ));
+  connect( save, SIGNAL( clicked() ), this, SLOT( push_inFun() ));
 //按钮的信号和槽函数
   connect( Plan, SIGNAL( clicked() ), this, SLOT( planFun() )); 
   connect( Move, SIGNAL( clicked() ), this, SLOT( moveFun() ));
   connect( PlanAndMove, SIGNAL( clicked() ), this, SLOT( planAndMoveFun() ));
-   connect( PlanRandom, SIGNAL( clicked() ), this, SLOT(  planRandomFun() ));
+  connect( PlanRandom, SIGNAL( clicked() ), this, SLOT(  planRandomFun() ));
 
   // 设置定时器的回调函数，按周期调用sendVel()
   //connect( output_timer, SIGNAL( timeout() ), this, SLOT( sendGoal() ));
@@ -203,18 +205,47 @@ void set_cartesian_path::update_Oz()
 void set_cartesian_path::update_Ow()
 {
  QString temp_string = positionY->text();
-    float Ow = temp_string.toFloat() ;  
+    float Ow = temp_string.toFloat();  
     target_pose.orientation.w = Ow;
     group.setPoseTarget(target_pose);
 }
+ void set_cartesian_path::push_inFun()
+ {
+   int num=waypoints.size();
+   ROS_INFO("waypoint number %d",num);
+   waypoints.push_back(target_pose);
+   ROS_INFO("%f %f",waypoints[0].position.x,waypoints[0].orientation.x);
+   if(wayPointNum==(waypoints.size()-1))
+   {
+   //记录vector中的路点个数
+   wayPointNum++;
+   //路点清零；
+   target_pose.position.x=0;
+   target_pose.position.y=0;
+   target_pose.position.z=0;
+   target_pose.orientation.x=0;
+   target_pose.orientation.y=0;
+   target_pose.orientation.z=0;
+   target_pose.orientation.w=0;
+   ROS_INFO("success added 1 point!");
+   }
+   else
+   ROS_INFO("failed push in waypoints");
+
+ }
 
 
 void set_cartesian_path::planFun()
 {
-     bool success = group.plan(my_plan);
- ROS_INFO("Visualizing plan 1 (pose goal) %s", success ? "" : "FAILED");
+moveit_msgs::RobotTrajectory trajectory;
+  double fraction = group.computeCartesianPath(waypoints,
+                                               0.03,  // eef_step
+                                               0.0,   // jump_threshold
+                                               trajectory);
 
- sleep(5.0);
+  ROS_INFO("Visualizing plan 4 (cartesian path) (%.2f%% acheived)",
+        fraction * 100.0);    
+ sleep(15.0);
 }
 
 void set_cartesian_path::moveFun()

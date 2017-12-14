@@ -81,10 +81,10 @@ set_pose::set_pose( QWidget* parent )
   connect( positionX, SIGNAL( editingFinished() ), this, SLOT( update_Px() ));            
   connect( positionY, SIGNAL( editingFinished() ), this, SLOT( update_Py() )); 
   connect( positionZ, SIGNAL( editingFinished() ), this, SLOT( update_Pz() ));
-  connect( positionX, SIGNAL( editingFinished() ), this, SLOT( update_Ox() ));         
-  connect( positionY, SIGNAL( editingFinished() ), this, SLOT( update_Oy() )); 
-  connect( positionZ, SIGNAL( editingFinished() ), this, SLOT( update_Oz() ));
-  connect( positionZ, SIGNAL( editingFinished() ), this, SLOT( update_Ow() ));
+  connect( orientationX, SIGNAL( editingFinished() ), this, SLOT( update_Ox() ));         
+  connect( orientationY, SIGNAL( editingFinished() ), this, SLOT( update_Oy() )); 
+  connect( orientationZ, SIGNAL( editingFinished() ), this, SLOT( update_Oz() ));
+  connect( orientationW, SIGNAL( editingFinished() ), this, SLOT( update_Ow() ));
 //按钮的信号和槽函数
   connect( Plan, SIGNAL( clicked() ), this, SLOT( planFun() )); 
   connect( Move, SIGNAL( clicked() ), this, SLOT( moveFun() ));
@@ -119,15 +119,16 @@ void set_pose::update_Py()
 
 void set_pose::update_Pz()
 {
- QString temp_string = positionY->text();
+ QString temp_string = positionZ->text();
     float Pz = temp_string.toFloat() ;  
-    target_pose.position.y = Pz;
+    target_pose.position.z = Pz;
+   ROS_INFO("position Z is %f",target_pose.position.z);
     group.setPoseTarget(target_pose);
 }
 
 void set_pose::update_Ox()
 {
- QString temp_string = positionY->text();
+ QString temp_string = orientationX->text();
     float Ox = temp_string.toFloat() ;  
     target_pose.orientation.x = Ox;
     group.setPoseTarget(target_pose);
@@ -135,7 +136,7 @@ void set_pose::update_Ox()
 
 void set_pose::update_Oy()
 {
- QString temp_string = positionY->text();
+ QString temp_string = orientationY->text();
     float Oy = temp_string.toFloat() ;  
     target_pose.orientation.y = Oy;
     group.setPoseTarget(target_pose);
@@ -143,7 +144,7 @@ void set_pose::update_Oy()
 
 void set_pose::update_Oz()
 {
- QString temp_string = positionY->text();
+ QString temp_string = orientationZ->text();
     float Oz = temp_string.toFloat() ;  
     target_pose.orientation.z = Oz;
     group.setPoseTarget(target_pose);
@@ -151,7 +152,7 @@ void set_pose::update_Oz()
 
 void set_pose::update_Ow()
 {
- QString temp_string = positionY->text();
+ QString temp_string = orientationW->text();
     float Ow = temp_string.toFloat() ;  
     target_pose.orientation.w = Ow;
     group.setPoseTarget(target_pose);
@@ -174,6 +175,7 @@ void set_pose::moveFun()
 void set_pose::planAndMoveFun()
 {
      group.setPoseTarget(target_pose);
+  
   //阻塞的，要求必须有一个asynchronous spinner开启
    bool success = group.plan(my_plan);
      group.asyncExecute(my_plan);

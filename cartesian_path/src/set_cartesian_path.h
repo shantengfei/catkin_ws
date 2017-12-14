@@ -42,6 +42,7 @@ protected Q_SLOTS:
   void update_Oy(); 
   void update_Oz();
   void update_Ow();
+  void push_inFun();
 
   // 内部变量.
 protected:
@@ -85,8 +86,6 @@ protected:
  QPushButton* check;
  QPushButton* previous;
  QPushButton* next;
- 
-
 
  QPushButton* Plan;
  QPushButton* Move;
@@ -96,7 +95,8 @@ protected:
 
  geometry_msgs::Pose target_pose;
  geometry_msgs::PoseStamped pose;
-  // ROS的publisher，用来发布速度topic
+ 
+ //
   ros::Publisher velocity_publisher_;
 
   // The ROS node handle.
@@ -105,7 +105,9 @@ protected:
 moveit::planning_interface::MoveGroup group;
  moveit::planning_interface::MoveGroup::Plan my_plan;
 const robot_state::JointModelGroup *joint_model_group;
-    std::vector<geometry_msgs::Pose> waypoints;
+std::vector<geometry_msgs::Pose> waypoints;
+//当前笛卡尔空间中有几个路点
+int wayPointNum;
 };
 
 } // end namespace rviz_teleop_commander
