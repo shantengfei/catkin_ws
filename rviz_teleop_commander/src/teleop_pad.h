@@ -7,6 +7,8 @@
 #include <rviz/panel.h>   //plugin基类的头文件
 #include <QLabel>
 #include <sensor_msgs/JointState.h>
+#include "tf/transform_listener.h"
+
 class QLineEdit;
 
 namespace rviz_teleop_commander
@@ -30,9 +32,10 @@ public:
   // 内部槽.
 protected Q_SLOTS:
   void update_joint_value();               //更新各个关节的信息
+  void update_pose_value(); 
       // 内部变量.
 protected:
-
+//显示的是6个关节角度
   QLabel *QLjoint1;
   QLabel *QLjoint2;
   QLabel *QLjoint3;
@@ -40,6 +43,18 @@ protected:
   QLabel *QLjoint5;
   QLabel *QLjoint6;
   double joint[6]={0};
+  //显示的是末端在工作空间下的位姿
+QLabel *Px;
+QLabel *Py;
+QLabel *Pz;
+QLabel *Ox;
+QLabel *Oy;
+QLabel *Oz;
+QLabel *Ow;
+QLabel *pitchAg;
+QLabel *yawAg;
+QLabel *rollAg;
+tf::TransformListener listener;
 
   void chatterCB(const sensor_msgs::JointState &msg);
 
@@ -47,6 +62,7 @@ protected:
   // The ROS node handle.
   //这里的是判断话题是那个话题的部分
   ros::NodeHandle nh_;
+  ros::NodeHandle nh_tf;
   std::string topicName ;
   bool sim ;
 };
