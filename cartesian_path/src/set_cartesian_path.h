@@ -107,6 +107,7 @@ moveit::planning_interface::MoveGroup group;
 const robot_state::JointModelGroup *joint_model_group;
 std::vector<geometry_msgs::Pose> waypoints;
 //当前笛卡尔空间中有几个路点
+moveit_msgs::RobotTrajectory trajectory;
 int wayPointNum;
 };
 

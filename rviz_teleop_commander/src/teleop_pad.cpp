@@ -4,6 +4,7 @@
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QTimer>
+#include <QPushButton>
 
 #include <geometry_msgs/Twist.h>
 #include <QDebug>
@@ -16,8 +17,65 @@ namespace rviz_teleop_commander
 // 构造函数，初始化变量
 TeleopPanel::TeleopPanel( QWidget* parent ) : rviz::Panel( parent )
 {
+      
 
       // 显示关节角度的窗口
+       QVBoxLayout *connect_layout = new QVBoxLayout;
+       connect_layout->setContentsMargins(0,50,0,50);
+
+       connect_layout->addWidget( new QLabel( "voice control" ));
+           record=new QPushButton;
+      record->setText("start ");
+      connect_layout->addWidget(record);
+
+              Delete=new QPushButton;
+      Delete->setText("end ");
+      connect_layout->addWidget(Delete);
+      connect_layout->addWidget( new QLabel( "Robot Connect" ));
+      ip=new QLineEdit;
+      connect_layout->addWidget( new QLabel( "ip" ));
+      connect_layout->addWidget(ip);
+
+         port=new QLineEdit;
+      connect_layout->addWidget( new QLabel( "port" ));
+      connect_layout->addWidget(port);
+
+       connect_layout->addWidget( new QLabel( "Current Connecting Status" ));
+        connect_layout->addWidget( new QLineEdit( "" ));
+
+        record=new QPushButton;
+      record->setText("connect");
+      connect_layout->addWidget(record);
+
+              Delete=new QPushButton;
+      Delete->setText("disconnect");
+      connect_layout->addWidget(Delete);
+         start=new QPushButton;
+      start->setText("start");
+      connect_layout->addWidget(start);
+
+         stop=new QPushButton;
+      stop->setText("stop");
+      connect_layout->addWidget(stop);
+          help=new QPushButton;
+      help->setText("help");
+      connect_layout->addWidget(help);
+
+      robotStatus=new QPushButton;
+      robotStatus->setText("robotStatus");
+      connect_layout->addWidget(robotStatus);
+
+
+
+            log=new QPushButton;
+      log->setText("log");
+      connect_layout->addWidget(log);
+
+              other=new QPushButton;
+            other->setText("other function");
+      connect_layout->addWidget(other);
+      coordinateDialog=new QFileDialog;
+      connect_layout->addWidget(coordinateDialog);
       QVBoxLayout *topic_layout = new QVBoxLayout;
       topic_layout->addWidget( new QLabel( "angular of joints" ));
   topic_layout->addWidget( new QLabel( "joint1" ));
@@ -94,6 +152,8 @@ TeleopPanel::TeleopPanel( QWidget* parent ) : rviz::Panel( parent )
   layout->addLayout( topic_layout );
   setLayout( layout );
    layout->addLayout( pose_layout );
+  setLayout( layout );
+  layout->addLayout( connect_layout );
   setLayout( layout );
   // 创建一个定时器，用来定时发布消息
   QTimer* output_timer = new QTimer( this );

@@ -6,6 +6,9 @@
 #include <ros/console.h>
 #include <rviz/panel.h>   //plugin基类的头文件
 #include <QLabel>
+#include <QPushButton>
+#include <QLineEdit>
+#include <QFileDialog>
 #include <sensor_msgs/JointState.h>
 #include "tf/transform_listener.h"
 
@@ -54,8 +57,22 @@ QLabel *Ow;
 QLabel *pitchAg;
 QLabel *yawAg;
 QLabel *rollAg;
+QLabel *velocity;
 tf::TransformListener listener;
-
+QLineEdit *ip;
+QLineEdit *port;
+QPushButton *start;
+QPushButton *stop;
+QPushButton *help;
+QPushButton *robotStatus;
+QPushButton *velocityAdd;
+QPushButton *velocityDec;
+QPushButton *log;
+QPushButton *record;
+QPushButton *other;
+QPushButton *Delete;
+QPushButton *coordinate;
+QFileDialog *coordinateDialog;
   void chatterCB(const sensor_msgs::JointState &msg);
 
   ros::Subscriber jointSub;

@@ -4,7 +4,8 @@
 ## First start with some standard catkin stuff.
 cmake_minimum_required(VERSION 2.8.3)
 project(set_pose_target)
-find_package(catkin REQUIRED COMPONENTS rviz moveit_core moveit_msgs moveit_ros_planning_interface pluginlib geometry_msgs moveit_ros_planning)
+ add_compile_options(-std=c++11)
+find_package(catkin REQUIRED COMPONENTS rviz sensor_msgs std_msgs geometry_msgs tf)
 catkin_package()
 include_directories(${catkin_INCLUDE_DIRS})
 link_directories(${catkin_LIBRARY_DIRS})

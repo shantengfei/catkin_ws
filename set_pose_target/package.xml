@@ -2,7 +2,7 @@
 <package>
   <name>set_pose_target</name>
   <version>0.0.0</version>
-  <description>The set_pose_target package</description>
+  <description>The set_pose_target</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag --> 
   <!-- Example:  -->
@@ -36,16 +36,10 @@
   <run_depend>std_msgs</run_depend>  <export>
       <rviz plugin="${prefix}/plugin_description.xml"/>
   </export>
-<build_depend>moveit_core</build_depend>
-<build_depend>moveit_msgs</build_depend>
-<build_depend>moveit_ros_planning_interface</build_depend>
-<build_depend>pluginlib</build_depend>
-<run_depend>moveit_core</run_depend>
-<run_depend>moveit_msgs</run_depend>
-<run_depend>moveit_ros_planning_interface</run_depend>
-<run_depend>pluginlib</run_depend>
+<build_depend>sensor_msgs</build_depend>
+<run_depend>sensor_msgs</run_depend>
 <build_depend>geometry_msgs</build_depend>
+<build_depend>tf</build_depend>
 <run_depend>geometry_msgs</run_depend>
-<build_depend>moveit_ros_planning</build_depend>
-<run_depend>moveit_ros_planning</run_depend>
+<run_depend>tf</run_depend>
 </package>

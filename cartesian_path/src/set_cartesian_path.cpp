@@ -18,6 +18,9 @@ namespace cartesian_path
 set_cartesian_path::set_cartesian_path( QWidget* parent )
   : rviz::Panel( parent ),spinner(1),group("jakaUr"),wayPointNum(0)
 {
+  //初始化使当前位置是路径点的第一个点
+  geometry_msgs::Pose start_pose= group.getCurrentPose().pose;
+  waypoints.push_back(start_pose);
   //多线程的自缠绕
    spinner.start();
   ROS_INFO("Reference frame: %s", group.getPlanningFrame().c_str());
@@ -159,7 +162,7 @@ void set_cartesian_path::update_Px()
     QString temp_string = positionX->text();
     float Px = temp_string.toFloat();  
     target_pose.position.x = Px;
-group.setPoseTarget(target_pose);
+//group.setPoseTarget(target_pose);
 }
 
 void set_cartesian_path::update_Py()
@@ -167,7 +170,7 @@ void set_cartesian_path::update_Py()
     QString temp_string = positionY->text();
     float Py = temp_string.toFloat() ;  
     target_pose.position.y = Py;
-    group.setPoseTarget(target_pose);
+ //   group.setPoseTarget(target_pose);
 }
 
 void set_cartesian_path::update_Pz()
@@ -175,7 +178,7 @@ void set_cartesian_path::update_Pz()
  QString temp_string = positionY->text();
     float Pz = temp_string.toFloat() ;  
     target_pose.position.y = Pz;
-    group.setPoseTarget(target_pose);
+ //   group.setPoseTarget(target_pose);
 }
 
 void set_cartesian_path::update_Ox()
@@ -183,7 +186,7 @@ void set_cartesian_path::update_Ox()
  QString temp_string = positionY->text();
     float Ox = temp_string.toFloat() ;  
     target_pose.orientation.x = Ox;
-    group.setPoseTarget(target_pose);
+ //   group.setPoseTarget(target_pose);
 }
 
 void set_cartesian_path::update_Oy()
@@ -191,7 +194,7 @@ void set_cartesian_path::update_Oy()
  QString temp_string = positionY->text();
     float Oy = temp_string.toFloat() ;  
     target_pose.orientation.y = Oy;
-    group.setPoseTarget(target_pose);
+  //  group.setPoseTarget(target_pose);
 }
 
 void set_cartesian_path::update_Oz()
@@ -199,7 +202,7 @@ void set_cartesian_path::update_Oz()
  QString temp_string = positionY->text();
     float Oz = temp_string.toFloat() ;  
     target_pose.orientation.z = Oz;
-    group.setPoseTarget(target_pose);
+ //   group.setPoseTarget(target_pose);
 }
 
 void set_cartesian_path::update_Ow()
@@ -207,26 +210,27 @@ void set_cartesian_path::update_Ow()
  QString temp_string = positionY->text();
     float Ow = temp_string.toFloat();  
     target_pose.orientation.w = Ow;
-    group.setPoseTarget(target_pose);
+ //   group.setPoseTarget(target_pose);
 }
  void set_cartesian_path::push_inFun()
  {
-   int num=waypoints.size();
-   ROS_INFO("waypoint number %d",num);
+  
    waypoints.push_back(target_pose);
-   ROS_INFO("%f %f",waypoints[0].position.x,waypoints[0].orientation.x);
-   if(wayPointNum==(waypoints.size()-1))
+    int num=waypoints.size();
+   ROS_INFO("waypoint number %d",num);
+   ROS_INFO("the %d position is %f %f",num,waypoints[num-1].position.x,waypoints[num-1].orientation.x);
+   if(wayPointNum==(waypoints.size()-2))
    {
    //记录vector中的路点个数
    wayPointNum++;
    //路点清零；
-   target_pose.position.x=0;
-   target_pose.position.y=0;
-   target_pose.position.z=0;
-   target_pose.orientation.x=0;
-   target_pose.orientation.y=0;
-   target_pose.orientation.z=0;
-   target_pose.orientation.w=0;
+  //  target_pose.position.x=0;
+  //  target_pose.position.y=0;
+  //  target_pose.position.z=0;
+  //  target_pose.orientation.x=0;
+  //  target_pose.orientation.y=0;
+  //  target_pose.orientation.z=0;
+  //  target_pose.orientation.w=0;
    ROS_INFO("success added 1 point!");
    }
    else
@@ -237,7 +241,7 @@ void set_cartesian_path::update_Ow()
 
 void set_cartesian_path::planFun()
 {
-moveit_msgs::RobotTrajectory trajectory;
+
   double fraction = group.computeCartesianPath(waypoints,
                                                0.03,  // eef_step
                                                0.0,   // jump_threshold
@@ -245,20 +249,22 @@ moveit_msgs::RobotTrajectory trajectory;
 
   ROS_INFO("Visualizing plan 4 (cartesian path) (%.2f%% acheived)",
         fraction * 100.0);    
- sleep(15.0);
+ //sleep(15.0);
 }
 
 void set_cartesian_path::moveFun()
 {
+  my_plan.trajectory_= trajectory;
+//group.execute(my_plan);
   group.asyncExecute(my_plan);
+  //执行完后需要进行当前位置植入首个点
+  geometry_msgs::Pose start_pose= group.getCurrentPose().pose;
+  waypoints.push_back(start_pose);
 }
 
 void set_cartesian_path::planAndMoveFun()
 {
-     group.setPoseTarget(target_pose);
-  //阻塞的，要求必须有一个asynchronous spinner开启
-   bool success = group.plan(my_plan);
-     group.asyncExecute(my_plan);
+
 }
 void set_cartesian_path:: planRandomFun()
 {
@@ -271,11 +277,7 @@ void set_cartesian_path:: planRandomFun()
    target_pose.position.x = pose.pose.position.x;
    target_pose.position.y = pose.pose.position.y;
    target_pose.position.z = pose.pose.position.z;
-    group.setPoseTarget(target_pose);
-     bool success = group.plan(my_plan);
- ROS_INFO("Visualizing plan 1 (pose goal) %s", success ? "" : "FAILED");
 
- sleep(5.0);
 }
 
 

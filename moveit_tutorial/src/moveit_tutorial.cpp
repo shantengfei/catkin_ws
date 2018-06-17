@@ -29,13 +29,18 @@ int main(int argc, char **argv)
    //获取一个随机点
    geometry_msgs::PoseStamped pose = group.getRandomPose();
    pose.header.stamp = ros::Time::now();
-   target_pose1.orientation.w = pose.pose.orientation.w;
-   //target_pose1.orientation.x = pose.pose.orientation.x;
-  // target_pose1.orientation.y = pose.pose.orientation.y;
-  // target_pose1.orientation.z = pose.pose.orientation.z;
-   target_pose1.position.x = pose.pose.position.x;
-   target_pose1.position.y = pose.pose.position.y;
-   target_pose1.position.z = pose.pose.position.z;
+  //  target_pose1.orientation.w = pose.pose.orientation.w;
+  //  //target_pose1.orientation.x = pose.pose.orientation.x;
+  // // target_pose1.orientation.y = pose.pose.orientation.y;
+  // // target_pose1.orientation.z = pose.pose.orientation.z;
+  //  target_pose1.position.x = pose.pose.position.x;
+  //  target_pose1.position.y = pose.pose.position.y;
+  //  target_pose1.position.z = pose.pose.position.z;
+
+   target_pose1.position.x = 0.3;
+   target_pose1.position.y = 0.2;
+   target_pose1.position.z = 0.1;
+
 ROS_INFO("target_pose1.orientation w %f,x%f,y%f,z%f",target_pose1.orientation.w,target_pose1.orientation.x,target_pose1.orientation.y,target_pose1.orientation.z);
   group.setPoseTarget(target_pose1);
  // group.setNamedTarget("home");
@@ -96,15 +101,15 @@ ROS_INFO("target_pose1.orientation w %f,x%f,y%f,z%f",target_pose1.orientation.w,
 std::vector<geometry_msgs::Pose> waypoints;
 
 geometry_msgs::Pose target_pose3 = target_pose1;
- waypoints.push_back(target_pose3);
-  target_pose3.position.x += 0.2;
+// waypoints.push_back(target_pose3);
+  target_pose3.position.x += 0.3;
   target_pose3.position.z += 0.2;
  waypoints.push_back(target_pose3);
  //第二个点
-target_pose3.position.y -= 0.2;
+target_pose3.position.y -= 0.3;
   waypoints.push_back(target_pose3);
 //第三个点
-  target_pose3.position.z -= 0.2;
+  target_pose3.position.z -= 0.3;
   target_pose3.position.y += 0.2;
   target_pose3.position.x -= 0.2;
   waypoints.push_back(target_pose3); 

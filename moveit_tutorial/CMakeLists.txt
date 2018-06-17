@@ -203,3 +203,11 @@ add_dependencies(moveit_tutorial ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EX
 target_link_libraries(moveit_tutorial
   ${catkin_LIBRARIES}
 )
+
+add_executable(cartesian_test
+  src/cartesian_test.cpp
+)
+add_dependencies(cartesian_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(cartesian_test
+  ${catkin_LIBRARIES}
+)
